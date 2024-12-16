@@ -25,7 +25,7 @@ jobs:
 
     - name: Run PowerShell Script
       run: |
-        powershell -ExecutionPolicy Bypass -File ./setup-dev-environment.ps1
+        powershell -ExecutionPolicy Bypass -File ./SetupDevEnv.ps1
 
     - name: Verify Installation
       run: |
