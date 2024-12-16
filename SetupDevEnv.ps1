@@ -46,8 +46,8 @@ Verify-Installation -command "gh"
 Install-ChocoPackage -package "awscli"
 Verify-Installation -command "awscli"
 # Install Node.js
-Install-ChocoPackage -package "nodejs-lts"
-Verify-Installation -command "nodejs-lts"
+Install-ChocoPackage -package "node"
+Verify-Installation -command "node"
 # Install Docker
 Install-ChocoPackage -package "docker-desktop"
 Verify-Installation -command "docker"
