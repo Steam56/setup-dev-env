@@ -9,20 +9,34 @@ Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://com
 # Update PATH
 $env:Path += ";$($env:ChocolateyInstall)\bin"
 
+function Install-ChocoPackage {
+    param (
+        [string]$package
+    )
+    try {
+        Write-Host "Installing $package..."
+        choco install $package -y
+    } catch {
+        Write-Host "Failed to install $package. Error: $_"
+    } 
+}
+
+
+
 # Install Visual Studio Code
-choco install vscode -y
+Install-ChocoPackage -package "vscode"
 
 # Install Git
-choco install git -y
+Install-ChocoPackage -package "git"
 
 # Install GitHub CLI
-choco install gh -y
+Install-ChocoPackage -package "gh"
 
 # Install AWS CLI
-choco install awscli -y
+Install-ChocoPackage -package "awscli"
 
 # Install Node.js
-choco install nodejs-lts -y
+Install-ChocoPackage -package "nodejs-lts"
 
 # Install AWS CDK
 npm install -g aws-cdk
