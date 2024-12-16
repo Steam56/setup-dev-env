@@ -3,11 +3,8 @@ name: Test Dev Environment Setup Script
 on:
   push:
     branches:
-      - master  # Trigger on push to the master branch
-  pull_request:
-    branches:
-      - master  # Trigger on PR targeting the master branch
-  workflow_dispatch:  # Optionally, allow manual trigger from GitHub UI
+      - master
+  workflow_dispatch:  # Manually trigger the workflow via GitHub UI
 
 jobs:
   test-script:
@@ -16,6 +13,31 @@ jobs:
     steps:
     - name: Checkout the code
       uses: actions/checkout@v3  # Checkout the repository code
+
+    # Check if this is a merge commit
+    - name: Check if merge commit
+      id: check_merge
+      run: |
+        # Check if the current commit is a merge commit
+        if [ $(git log --pretty=%P -n 1 HEAD | wc -w) -gt 1 ]; then
+          echo "This is a merge commit."
+        else
+          echo "This is not a merge commit. Exiting."
+          exit 0  # Exit early if not a merge commit
+        fi
+
+    # Check for changes to relevant files (e.g., PowerShell scripts)
+    - name: Check for changes
+      id: check_changes
+      run: |
+        git diff --exit-code --quiet HEAD^ HEAD -- SetupDevEnv.ps1 || echo "Changes detected"
+
+    # Exit if no changes were detected
+    - name: Exit if no changes
+      if: steps.check_changes.outputs.diff == 'Changes detected'
+      run: |
+        echo "No changes detected, skipping workflow."
+        exit 0  # Exit early if no changes
 
     - name: Set up Chocolatey
       run: |
