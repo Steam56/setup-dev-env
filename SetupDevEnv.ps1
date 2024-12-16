@@ -52,6 +52,12 @@ Verify-Installation -command "nodejs-lts"
 Install-ChocoPackage -package "docker-desktop"
 Verify-Installation -command "docker"
 Start-Service -Name "com.docker.service"
+# Install Python
+Install-ChocoPackage -package "python"
+Verify-Installation -command "pip"
+# Install 7zip
+Install-ChocoPackage -package "7zip"
+Verify-Installation -command "7Zip"
 # Install AWS CDK
 npm install -g aws-cdk
 
