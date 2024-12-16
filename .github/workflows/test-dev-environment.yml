@@ -1,0 +1,36 @@
+name: Test Dev Environment Setup Script
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-script:
+    runs-on: windows-latest  # Using a Windows environment for your script
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3  # Checkout the code from the repository
+
+    - name: Set up Chocolatey
+      run: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force;
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+    - name: Run PowerShell Script
+      run: |
+        # Execute the PowerShell script
+        powershell -ExecutionPolicy Bypass -File ./setup-dev-environment.ps1
+
+    - name: Verify Installation
+      run: |
+        # Verify that some packages are installed correctly
+        choco list --local-only
+        git --version
+        node --version
+        python --version
