@@ -3,18 +3,19 @@ name: Test Dev Environment Setup Script
 on:
   push:
     branches:
-      - main
+      - master  # Trigger on push to the master branch
   pull_request:
     branches:
-      - main
+      - master  # Trigger on PR targeting the master branch
+  workflow_dispatch:  # Optionally, allow manual trigger from GitHub UI
 
 jobs:
   test-script:
-    runs-on: windows-latest  # Using a Windows environment for your script
+    runs-on: windows-latest  # Use a Windows runner
 
     steps:
     - name: Checkout the code
-      uses: actions/checkout@v3  # Checkout the code from the repository
+      uses: actions/checkout@v3  # Checkout the repository code
 
     - name: Set up Chocolatey
       run: |
@@ -24,12 +25,10 @@ jobs:
 
     - name: Run PowerShell Script
       run: |
-        # Execute the PowerShell script
         powershell -ExecutionPolicy Bypass -File ./setup-dev-environment.ps1
 
     - name: Verify Installation
       run: |
-        # Verify that some packages are installed correctly
         choco list --local-only
         git --version
         node --version
