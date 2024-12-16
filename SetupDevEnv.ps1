@@ -21,23 +21,33 @@ function Install-ChocoPackage {
     } 
 }
 
-
+function Verify-Installation {
+    param (
+        [string]$command
+    )
+    if (Get-Command $command -ErrorAction SilentlyContinue) {
+        Write-Host "$command is installed."
+    } else {
+        Write-Host "$command is not installed"
+    }
+    
+}
 
 # Install Visual Studio Code
 Install-ChocoPackage -package "vscode"
-
+Verify-Installation -command "vscode"
 # Install Git
 Install-ChocoPackage -package "git"
-
+Verify-Installation -command "git"
 # Install GitHub CLI
 Install-ChocoPackage -package "gh"
-
+Verify-Installation -command "gh"
 # Install AWS CLI
 Install-ChocoPackage -package "awscli"
-
+Verify-Installation -command "awscliv"
 # Install Node.js
 Install-ChocoPackage -package "nodejs-lts"
-
+Verify-Installation -command "nodejs-lts"
 # Install AWS CDK
 npm install -g aws-cdk
 
