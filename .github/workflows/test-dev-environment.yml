@@ -28,12 +28,16 @@ jobs:
             exit 0  # Exit early if not a merge commit
         }
 
-    # Check for changes in the SetupDevEnv.ps1 script
+    # Fetch the latest changes and check for differences in SetupDevEnv.ps1
+    - name: Fetch latest changes
+      run: |
+        git fetch origin master
+
+    # Check for changes in SetupDevEnv.ps1 file
     - name: Check for changes in SetupDevEnv.ps1
       id: check_changes
       run: |
-        # Check if there are any changes in the SetupDevEnv.ps1 file
-        git diff --exit-code --quiet HEAD^ HEAD -- SetupDevEnv.ps1 || echo "Changes detected"
+        git diff --exit-code --quiet origin/master -- SetupDevEnv.ps1 || echo "Changes detected"
 
     # Exit early if no changes in SetupDevEnv.ps1
     - name: Exit if no changes detected
