@@ -1,9 +1,9 @@
-name: Test Dev Environment Setup Script
+name: Setup Development Environment
 
 on:
   push:
     branches:
-      - master
+      - master  # Only trigger on push to master
   workflow_dispatch:  # Manually trigger the workflow via GitHub UI
 
 jobs:
@@ -11,45 +11,44 @@ jobs:
     runs-on: windows-latest  # Use a Windows runner
 
     steps:
+    # Checkout the repository code
     - name: Checkout the code
-      uses: actions/checkout@v3  # Checkout the repository code
+      uses: actions/checkout@v3
 
     # Check if this is a merge commit
     - name: Check if merge commit
       id: check_merge
       run: |
-        # Check if the current commit is a merge commit
-        if [ $(git log --pretty=%P -n 1 HEAD | wc -w) -gt 1 ]; then
-          echo "This is a merge commit."
-        else
-          echo "This is not a merge commit. Exiting."
-          exit 0  # Exit early if not a merge commit
-        fi
+        # PowerShell script to check for a merge commit
+        $mergeCommit = git log --pretty=%P -n 1 HEAD
+        if ($mergeCommit.Split().Count -gt 1) {
+            Write-Host "This is a merge commit."
+        } else {
+            Write-Host "This is not a merge commit. Exiting."
+            exit 0  # Exit early if not a merge commit
+        }
 
-    # Check for changes to relevant files (e.g., PowerShell scripts)
-    - name: Check for changes
+    # Check for changes in the SetupDevEnv.ps1 script
+    - name: Check for changes in SetupDevEnv.ps1
       id: check_changes
       run: |
+        # Check if there are any changes in the SetupDevEnv.ps1 file
         git diff --exit-code --quiet HEAD^ HEAD -- SetupDevEnv.ps1 || echo "Changes detected"
 
-    # Exit if no changes were detected
-    - name: Exit if no changes
+    # Exit early if no changes in SetupDevEnv.ps1
+    - name: Exit if no changes detected
       if: steps.check_changes.outputs.diff == 'Changes detected'
       run: |
-        echo "No changes detected, skipping workflow."
-        exit 0  # Exit early if no changes
+        echo "No changes detected in SetupDevEnv.ps1, skipping the workflow."
+        exit 0  # Exit early if no changes detected
 
-    - name: Set up Chocolatey
-      run: |
-        Set-ExecutionPolicy Bypass -Scope Process -Force;
-        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
+    # Run the full PowerShell script
     - name: Run PowerShell Script
       run: |
         powershell -ExecutionPolicy Bypass -File ./SetupDevEnv.ps1
 
-    - name: Verify Installation
+    # Verify installation of packages
+    - name: Verify Installed Software
       run: |
         choco list --local-only
         git --version
