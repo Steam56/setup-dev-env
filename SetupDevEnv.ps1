@@ -1,3 +1,5 @@
+# Created by Aaron Jefferies
+
 # Define installation paths (optional)
 $installPath = "$env:ProgramFiles"
 
