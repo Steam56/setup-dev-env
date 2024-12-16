@@ -48,6 +48,10 @@ Verify-Installation -command "awscliv"
 # Install Node.js
 Install-ChocoPackage -package "nodejs-lts"
 Verify-Installation -command "nodejs-lts"
+# Install Docker
+Install-ChocoPackage -package "docker-desktop"
+Verify-Installation -command "docker"
+Start-Service -Name "com.docker.service"
 # Install AWS CDK
 npm install -g aws-cdk
 
