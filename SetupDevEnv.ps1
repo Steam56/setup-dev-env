@@ -44,7 +44,7 @@ Install-ChocoPackage -package "gh"
 Verify-Installation -command "gh"
 # Install AWS CLI
 Install-ChocoPackage -package "awscli"
-Verify-Installation -command "awscliv"
+Verify-Installation -command "awscli"
 # Install Node.js
 Install-ChocoPackage -package "nodejs-lts"
 Verify-Installation -command "nodejs-lts"
