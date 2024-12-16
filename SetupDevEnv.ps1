@@ -51,7 +51,14 @@ Verify-Installation -command "node"
 # Install Docker
 Install-ChocoPackage -package "docker-desktop"
 Verify-Installation -command "docker"
+# Start Docker service
 Start-Service -Name "com.docker.service"
+# Check Docker service status
+if ((Get-Service -Name "com.docker.service").Status -eq 'Running') {
+    Write-Host "Docker service is running."
+} else {
+    Write-Host "Docker service is not running."
+}
 # Install Python
 Install-ChocoPackage -package "python"
 Verify-Installation -command "pip"
