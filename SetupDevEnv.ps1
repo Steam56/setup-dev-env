@@ -9,6 +9,7 @@ Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://com
 # Update PATH
 $env:Path += ";$($env:ChocolateyInstall)\bin"
 
+# Function to install a Chocolatey package
 function Install-ChocoPackage {
     param (
         [string]$package
@@ -21,6 +22,7 @@ function Install-ChocoPackage {
     } 
 }
 
+# Function to verify the installation of a command
 function Verify-Installation {
     param (
         [string]$command
@@ -30,35 +32,50 @@ function Verify-Installation {
     } else {
         Write-Host "$command is not installed"
     }
-    
 }
 
 # Install Visual Studio Code
 Install-ChocoPackage -package "vscode"
 Verify-Installation -command "vscode"
+
 # Install Git
 Install-ChocoPackage -package "git"
 Verify-Installation -command "git"
+
 # Install GitHub CLI
 Install-ChocoPackage -package "gh"
 Verify-Installation -command "gh"
+
 # Install AWS CLI
 Install-ChocoPackage -package "awscli"
-Verify-Installation -command "awscliv"
-# Install Node.js
+Verify-Installation -command "aws"
+
+# Install Node.js and verify Node.js and npm
 Install-ChocoPackage -package "nodejs-lts"
-Verify-Installation -command "nodejs-lts"
-# Install Docker
+Verify-Installation -command "node"
+Verify-Installation -command "npm"
+
+# Install Docker and start Docker service
 Install-ChocoPackage -package "docker-desktop"
 Verify-Installation -command "docker"
 Start-Service -Name "com.docker.service"
+
+# Verify Docker service is running
+if ((Get-Service -Name "com.docker.service").Status -eq 'Running') {
+    Write-Host "Docker service is running."
+} else {
+    Write-Host "Docker service is not running."
+}
+
 # Install Python
 Install-ChocoPackage -package "python"
 Verify-Installation -command "pip"
+
 # Install 7zip
 Install-ChocoPackage -package "7zip"
-Verify-Installation -command "7Zip"
-# Install AWS CDK
+Verify-Installation -command "7zip"
+
+# Install AWS CDK globally
 npm install -g aws-cdk
 
 # Configure GitHub CLI (interactive login)
