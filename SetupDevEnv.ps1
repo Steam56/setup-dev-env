@@ -36,46 +36,44 @@ function Verify-Installation {
     }
 }
 
-# Install Visual Studio Code
-Install-ChocoPackage -package "vscode"
-Verify-Installation -command "vscode"
+# Store functions in a script block
+$initScript = {
+    function Install-ChocoPackage {
+        param (
+            [string]$package
+        )
+        try {
+            Write-Host "Installing $package..."
+            choco install $package -y
+        } catch {
+            Write-Host "Failed to install $package. Error: $_"
+        } 
+    }
 
-# Install Git
-Install-ChocoPackage -package "git"
-Verify-Installation -command "git"
-
-# Install GitHub CLI
-Install-ChocoPackage -package "gh"
-Verify-Installation -command "gh"
-
-# Install AWS CLI
-Install-ChocoPackage -package "awscli"
-Verify-Installation -command "aws"
-
-# Install Node.js and verify Node.js and npm
-Install-ChocoPackage -package "nodejs-lts"
-Verify-Installation -command "node"
-Verify-Installation -command "npm"
-
-# Install Docker and start Docker service
-Install-ChocoPackage -package "docker-desktop"
-Verify-Installation -command "docker"
-Start-Service -Name "com.docker.service"
-
-# Verify Docker service is running
-if ((Get-Service -Name "com.docker.service").Status -eq 'Running') {
-    Write-Host "Docker service is running."
-} else {
-    Write-Host "Docker service is not running."
+    function Verify-Installation {
+        param (
+            [string]$command
+        )
+        if (Get-Command $command -ErrorAction SilentlyContinue) {
+            Write-Host "$command is installed."
+        } else {
+            Write-Host "$command is not installed"
+        }
+    }
 }
 
-# Install Python
-Install-ChocoPackage -package "python"
-Verify-Installation -command "pip"
+# Start jobs with initialization script
+$vscode = Start-Job -ScriptBlock { Install-ChocoPackage -package "vscode"; Verify-Installation -command "vscode" } -InitializationScript $initScript
+$git = Start-Job -ScriptBlock { Install-ChocoPackage -package "git"; Verify-Installation -command "git" } -InitializationScript $initScript
+$GitHub = Start-Job -ScriptBlock { Install-ChocoPackage -package "gh"; Verify-Installation -command "gh" } -InitializationScript $initScript
+$aws = Start-Job -ScriptBlock { Install-ChocoPackage -package "awscli"; Verify-Installation -command "aws" } -InitializationScript $initScript
+$node = Start-Job -ScriptBlock { Install-ChocoPackage -package "nodejs-lts"; Verify-Installation -command "node"; Verify-Installation -command "npm" } -InitializationScript $initScript
+$docker = Start-Job -ScriptBlock { Install-ChocoPackage -package "docker-desktop"; Verify-Installation -command "docker"; Start-Service -Name "com.docker.service" } -InitializationScript $initScript
+$python = Start-Job -ScriptBlock { Install-ChocoPackage -package "python"; Verify-Installation -command "pip" } -InitializationScript $initScript
+$zip = Start-Job -ScriptBlock { Install-ChocoPackage -package "7zip"; Verify-Installation -command "7zip" } -InitializationScript $initScript
 
-# Install 7zip
-Install-ChocoPackage -package "7zip"
-Verify-Installation -command "7zip"
+# Wait for jobs to complete
+Wait-Job -Job $vscode, $git, $GitHub, $aws, $node, $docker, $python, $zip
 
 # Install AWS CDK globally
 npm install -g aws-cdk
