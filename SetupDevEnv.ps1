@@ -68,7 +68,7 @@ $git = Start-Job -ScriptBlock { Install-ChocoPackage -package "git"; Verify-Inst
 $GitHub = Start-Job -ScriptBlock { Install-ChocoPackage -package "gh"; Verify-Installation -command "gh" } -InitializationScript $initScript
 $aws = Start-Job -ScriptBlock { Install-ChocoPackage -package "awscli"; Verify-Installation -command "aws" } -InitializationScript $initScript
 $node = Start-Job -ScriptBlock { Install-ChocoPackage -package "nodejs-lts"; Verify-Installation -command "node"; Verify-Installation -command "npm" } -InitializationScript $initScript
-$docker = Start-Job -ScriptBlock { Install-ChocoPackage -package "docker-desktop"; Verify-Installation -command "docker"; Start-Service -Name "com.docker.service" } -InitializationScript $initScript
+$docker = Start-Job -ScriptBlock { Install-ChocoPackage -package "docker-desktop"  -installArgs '"ADD_WCOW_FEATURES=1"'; Verify-Installation -command "docker"; Start-Service -Name "com.docker.service" } -InitializationScript $initScript
 $python = Start-Job -ScriptBlock { Install-ChocoPackage -package "python"; Verify-Installation -command "pip" } -InitializationScript $initScript
 $zip = Start-Job -ScriptBlock { Install-ChocoPackage -package "7zip"; Verify-Installation -command "7zip" } -InitializationScript $initScript
 
